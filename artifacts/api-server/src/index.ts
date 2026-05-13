@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import nodemailer from 'nodemailer';
 import { sql, eq } from 'drizzle-orm';
 import { db } from '@workspace/db';
 import { usageLogs, userSettings } from '@workspace/db/schema';
@@ -8,6 +9,18 @@ import { FocusModeToggleSchema } from '@workspace/api-zod';
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Email Configuration (Using Gmail SMTP - replace with your credentials)
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER || 'blurguard.auth@gmail.com',
+    pass: process.env.EMAIL_PASS || 'your-app-password-here', // Use Gmail App Password
+  },
+});
+
+// In-memory OTP store
+const otpStore: Record<string, { code: string; timestamp: number; attempts: number }> = {};
 
 // GET /api/usage
 app.get('/api/usage', async (req, res) => {
@@ -118,6 +131,150 @@ app.get('/api/productivity-insights', async (req, res) => {
   } catch (error) {
     console.error('Error fetching insights:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// POST /api/auth/send-otp - Send OTP via Email
+app.post('/api/auth/send-otp', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      res.status(400).json({ error: 'Email is required' });
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      res.status(400).json({ error: 'Invalid email format' });
+      return;
+    }
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Store OTP with 10-minute expiry
+    otpStore[email] = {
+      code: otp,
+      timestamp: Date.now(),
+      attempts: 0,
+    };
+
+    // Send Email with OTP
+    try {
+      await transporter.sendMail({
+        from: '"BlurGuard" <blurguard.auth@gmail.com>',
+        to: email,
+        subject: '🔐 Your BlurGuard OTP Verification Code',
+        html: `
+          <div style="font-family: 'Outfit', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); border-radius: 16px; padding: 40px; text-align: center; color: white;">
+              <h1 style="margin: 0 0 10px 0; font-size: 28px;">BlurGuard</h1>
+              <p style="margin: 0 0 30px 0; opacity: 0.9;">AI Focus Engine</p>
+            </div>
+            
+            <div style="background: #f8f9fa; border-radius: 12px; padding: 40px; margin-top: 20px; text-align: center;">
+              <h2 style="color: #1a1a1a; margin: 0 0 15px 0;">Verify Your Account</h2>
+              <p style="color: #666; margin: 0 0 30px 0; font-size: 14px;">Enter this code to verify your BlurGuard account. This code expires in 10 minutes.</p>
+              
+              <div style="background: white; border: 2px dashed #6366f1; border-radius: 12px; padding: 20px; margin: 30px 0;">
+                <div style="font-size: 48px; font-weight: black; letter-spacing: 8px; color: #6366f1; font-family: 'Courier New', monospace;">
+                  ${otp}
+                </div>
+              </div>
+              
+              <p style="color: #999; font-size: 12px; margin: 30px 0 0 0;">If you didn't request this code, you can ignore this email.</p>
+            </div>
+            
+            <div style="text-align: center; color: #999; font-size: 12px; margin-top: 20px;">
+              <p>© 2026 BlurGuard. All rights reserved.</p>
+            </div>
+          </div>
+        `,
+      });
+
+      console.log(`✅ OTP sent to ${email}: ${otp}`);
+
+      res.json({
+        success: true,
+        message: 'OTP sent successfully to your email',
+        expiresIn: 600, // 10 minutes
+      });
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      // Still store the OTP for testing if email fails
+      console.log(`[TEST MODE] OTP for ${email}: ${otp}`);
+      res.json({
+        success: true,
+        message: 'OTP generated (email service unavailable - check console)',
+        expiresIn: 600,
+        otp: process.env.NODE_ENV === 'development' ? otp : undefined, // Debug mode only
+      });
+    }
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    res.status(500).json({ error: 'Failed to send OTP' });
+  }
+});
+
+// POST /api/auth/verify-otp - Verify OTP sent to email
+app.post('/api/auth/verify-otp', async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      res.status(400).json({ error: 'Email and OTP are required' });
+      return;
+    }
+
+    const storedOtp = otpStore[email];
+
+    if (!storedOtp) {
+      res.status(400).json({ error: 'OTP not found or expired' });
+      return;
+    }
+
+    // Check if OTP is expired (10 minutes)
+    if (Date.now() - storedOtp.timestamp > 10 * 60 * 1000) {
+      delete otpStore[email];
+      res.status(400).json({ error: 'OTP expired' });
+      return;
+    }
+
+    // Check attempts (max 5)
+    if (storedOtp.attempts >= 5) {
+      delete otpStore[email];
+      res.status(400).json({ error: 'Too many attempts. Please request a new OTP.' });
+      return;
+    }
+
+    if (storedOtp.code !== otp) {
+      storedOtp.attempts++;
+      res.status(400).json({ 
+        error: 'Invalid OTP', 
+        attemptsRemaining: 5 - storedOtp.attempts 
+      });
+      return;
+    }
+
+    // OTP verified successfully
+    delete otpStore[email];
+
+    // Generate session token
+    const token = Buffer.from(`${email}-${Date.now()}`).toString('base64');
+
+    console.log(`✅ OTP verified for ${email}`);
+
+    res.json({
+      success: true,
+      message: 'Account verified successfully',
+      token,
+      email,
+    });
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    res.status(500).json({ error: 'Failed to verify OTP' });
   }
 });
 

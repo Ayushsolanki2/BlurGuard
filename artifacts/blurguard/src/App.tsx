@@ -56,10 +56,10 @@ type Theme = {
 };
 
 const THEMES: Theme[] = [
-  { id: 'midnight', name: 'Midnight Indigo', primary: 'bg-indigo-600/20', secondary: 'bg-purple-600/20', accent: 'text-indigo-400' },
-  { id: 'emerald', name: 'Emerald Forest', primary: 'bg-emerald-600/20', secondary: 'bg-teal-600/20', accent: 'text-emerald-400' },
-  { id: 'sunset', name: 'Cyber Sunset', primary: 'bg-rose-600/20', secondary: 'bg-orange-600/20', accent: 'text-rose-400' },
-  { id: 'ocean', name: 'Deep Ocean', primary: 'bg-blue-600/20', secondary: 'bg-cyan-600/20', accent: 'text-blue-400' }
+  { id: 'midnight', name: 'Midnight Indigo', primary: 'bg-gradient-to-br from-indigo-600/30 to-purple-600/20', secondary: 'bg-gradient-to-br from-purple-600/25 to-pink-600/15', accent: 'text-indigo-400' },
+  { id: 'emerald', name: 'Emerald Forest', primary: 'bg-gradient-to-br from-emerald-600/30 to-teal-600/20', secondary: 'bg-gradient-to-br from-teal-600/25 to-cyan-600/15', accent: 'text-emerald-400' },
+  { id: 'sunset', name: 'Cyber Sunset', primary: 'bg-gradient-to-br from-rose-600/30 to-orange-600/20', secondary: 'bg-gradient-to-br from-orange-600/25 to-yellow-600/15', accent: 'text-rose-400' },
+  { id: 'ocean', name: 'Deep Ocean', primary: 'bg-gradient-to-br from-blue-600/30 to-cyan-600/20', secondary: 'bg-gradient-to-br from-cyan-600/25 to-sky-600/15', accent: 'text-blue-400' }
 ];
 
 export default function App() {
@@ -589,39 +589,77 @@ function Dashboard({ profile, permissions }: { profile: any, permissions: any })
 
       {/* Hero Stats */}
       <Magnetic strength={0.05}>
-        <motion.section className="premium-border relative w-full rounded-[40px] bg-zinc-900/40 border border-white/10 p-8 flex items-center justify-between group shadow-2xl">
+        <motion.section className="premium-border relative w-full rounded-[48px] bg-gradient-to-br from-zinc-900/60 via-indigo-950/40 to-purple-950/30 border border-white/10 p-8 flex items-center justify-between group shadow-2xl overflow-hidden">
+          {/* Animated Background Gradient */}
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3]
+            }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 via-transparent to-purple-500/10 blur-2xl"
+          />
+          
           <div className="relative z-10 space-y-4">
-            <div className="flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-2xl w-fit">
-              <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              className="flex items-center gap-3 bg-white/10 border border-white/20 px-4 py-2.5 rounded-2xl w-fit shadow-[0_8px_20px_rgba(99,102,241,0.2)]"
+            >
+              <Star className="w-4 h-4 text-amber-400 fill-amber-400 animate-pulse" />
               <span className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Elite Level</span>
-            </div>
+            </motion.div>
             <div className="flex items-baseline gap-1">
-              <span className="text-7xl font-black tracking-tighter text-white">{hours}</span>
+              <motion.span 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-7xl font-black tracking-tighter bg-gradient-to-r from-white via-indigo-200 to-white bg-clip-text text-transparent"
+              >
+                {hours}
+              </motion.span>
               <span className="text-3xl font-black text-white/40 mr-3">h</span>
-              <span className="text-7xl font-black tracking-tighter text-white">{minutes}</span>
+              <motion.span 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-7xl font-black tracking-tighter bg-gradient-to-r from-white via-indigo-200 to-white bg-clip-text text-transparent"
+              >
+                {minutes}
+              </motion.span>
               <span className="text-3xl font-black text-white/40">m</span>
             </div>
-            <p className="text-xs font-bold text-emerald-400 flex items-center gap-2">
+            <motion.p 
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-xs font-bold text-emerald-400 flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full w-fit"
+            >
               <TrendingUp className="w-4 h-4" /> Usage down by 14%
-            </p>
+            </motion.p>
           </div>
-          <div className="relative z-10 w-32 h-32">
-            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-               <circle cx="50" cy="50" r="44" fill="transparent" stroke="rgba(255,255,255,0.03)" strokeWidth="10" />
+          <motion.div 
+            className="relative z-10 w-32 h-32"
+            animate={{ rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <svg className="w-full h-full transform -rotate-90 filter drop-shadow-lg" viewBox="0 0 100 100">
+               <circle cx="50" cy="50" r="44" fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="10" />
                <motion.circle
                 initial={{ strokeDashoffset: 276 }}
                 animate={{ strokeDashoffset: 276 - (276 * percentage) / 100 }}
                 cx="50" cy="50" r="44" fill="transparent" stroke="url(#heroGrad)" strokeWidth="10"
                 strokeLinecap="round" strokeDasharray="276"
+                transition={{ duration: 1.5, ease: "easeOut" }}
               />
               <defs>
                 <linearGradient id="heroGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#6366f1" />
-                  <stop offset="100%" stopColor="#a855f7" />
+                  <stop offset="50%" stopColor="#a855f7" />
+                  <stop offset="100%" stopColor="#ec4899" />
                 </linearGradient>
               </defs>
             </svg>
-          </div>
+          </motion.div>
         </motion.section>
       </Magnetic>
 
@@ -634,20 +672,39 @@ function Dashboard({ profile, permissions }: { profile: any, permissions: any })
           {achievements.map((item, i) => (
             <motion.div 
               key={i}
-              whileHover={{ y: -5 }}
+              whileHover={{ y: -8, boxShadow: item.unlocked ? '0_20px_40px_rgba(217,119,6,0.3)' : '0_0px_0px_rgba(0,0,0,0)' }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
               className={cn(
-                "glass rounded-[32px] p-5 border flex flex-col gap-3 transition-all",
-                item.unlocked ? "border-amber-500/30 bg-amber-500/5" : "border-white/5 opacity-50 grayscale"
+                "premium-border glass rounded-[32px] p-5 border flex flex-col gap-3 transition-all relative overflow-hidden",
+                item.unlocked ? "border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-amber-500/5" : "border-white/5 opacity-40 grayscale"
               )}
             >
-              <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center", item.unlocked ? "bg-amber-500/20 text-amber-400" : "bg-white/5 text-zinc-500")}>
+              {item.unlocked && (
+                <motion.div 
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  className="absolute -top-8 -right-8 w-32 h-32 bg-gradient-to-br from-amber-500/20 to-transparent rounded-full blur-2xl"
+                />
+              )}
+              <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center transition-all relative z-10", item.unlocked ? "bg-amber-500/20 text-amber-400 shadow-[0_0_20px_rgba(217,119,6,0.3)]" : "bg-white/5 text-zinc-500")}>
                 <item.icon className="w-6 h-6" />
               </div>
               <div>
                 <h4 className="font-black text-white text-sm">{item.name}</h4>
                 <p className="text-[10px] font-bold text-zinc-500">{item.desc}</p>
               </div>
-              {item.unlocked && <CheckCircle2 className="absolute top-4 right-4 w-4 h-4 text-emerald-500" />}
+              {item.unlocked && (
+                <motion.div 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: i * 0.1 + 0.3, type: "spring" }}
+                  className="absolute top-4 right-4 z-10"
+                >
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500 drop-shadow-lg" />
+                </motion.div>
+              )}
             </motion.div>
           ))}
         </div>
@@ -710,35 +767,54 @@ function Dashboard({ profile, permissions }: { profile: any, permissions: any })
                   >
                     <div 
                       className={cn(
-                        "premium-border glass rounded-[32px] p-5 flex items-center gap-5 border border-white/5 transition-all duration-1000",
-                        isOverLimit && "border-rose-500/30 bg-rose-500/5 shadow-[0_0_40px_rgba(244,63,94,0.1)]"
+                        "premium-border glass rounded-[36px] p-5 flex items-center gap-5 border transition-all duration-500 hover:border-white/20 group-hover:shadow-[0_0_40px_rgba(99,102,241,0.2)]",
+                        isOverLimit && "border-rose-500/40 bg-gradient-to-r from-rose-500/10 to-rose-500/5 shadow-[0_0_40px_rgba(244,63,94,0.15)]"
                       )}
                       style={{ filter: simulatingBreach === app.name ? 'blur(12px)' : `blur(${blurAmount}px)` }}
                     >
-                      <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center text-white bg-gradient-to-br shadow-xl transition-transform", app.color)}>
+                      <motion.div 
+                        whileHover={{ scale: 1.1 }}
+                        className={cn("w-14 h-14 rounded-2xl flex items-center justify-center text-white bg-gradient-to-br shadow-lg transition-all", app.color)}
+                      >
                         <app.icon className="w-7 h-7" />
-                      </div>
+                      </motion.div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <h4 className="font-black text-white">{app.name}</h4>
                           {isOverLimit && (
                             <motion.span 
-                              animate={{ opacity: [1, 0.5, 1] }}
+                              animate={{ 
+                                scale: [1, 1.05, 1],
+                                boxShadow: ['0_0_0_rgba(244,63,94,0.5)', '0_0_20px_rgba(244,63,94,0.8)', '0_0_0_rgba(244,63,94,0.5)']
+                              }}
                               transition={{ duration: 1.5, repeat: Infinity }}
-                              className="text-[8px] px-2 py-0.5 rounded-full bg-rose-500 text-white font-black uppercase shadow-[0_0_15px_rgba(244,63,94,0.5)]"
+                              className="text-[8px] px-2.5 py-1 rounded-full bg-gradient-to-r from-rose-500 to-rose-600 text-white font-black uppercase"
                             >
                               BLURRED
                             </motion.span>
                           )}
                         </div>
-                        <p className="text-[10px] font-bold text-zinc-500">{app.minutes}m / {app.limit}m limit</p>
+                        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden mt-2">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${Math.min(100, (app.minutes / app.limit) * 100)}%` }}
+                            className={cn(
+                              "h-full rounded-full",
+                              isOverLimit ? "bg-gradient-to-r from-rose-500 to-rose-600" : "bg-gradient-to-r from-indigo-500 to-purple-500"
+                            )}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                          />
+                        </div>
+                        <p className="text-[10px] font-bold text-zinc-500 mt-1.5">{app.minutes}m / {app.limit}m limit</p>
                       </div>
-                      <button 
+                      <motion.button 
+                        whileHover={{ scale: 1.15 }}
+                        whileTap={{ scale: 0.85 }}
                         onClick={() => setSimulatingBreach(simulatingBreach === app.name ? null : app.name)}
-                        className="w-10 h-10 rounded-xl glass flex items-center justify-center text-zinc-500 hover:text-white transition-all"
+                        className="w-10 h-10 rounded-xl glass flex items-center justify-center text-zinc-400 hover:text-white transition-all border border-white/10 hover:border-indigo-500/50"
                       >
-                        <Zap className={cn("w-5 h-5", simulatingBreach === app.name && "text-amber-400 fill-amber-400")} />
-                      </button>
+                        <Zap className={cn("w-5 h-5 transition-colors", simulatingBreach === app.name && "text-amber-400 fill-amber-400")} />
+                      </motion.button>
                     </div>
 
                     {/* Slow Blur Overlay Simulation */}
@@ -748,15 +824,18 @@ function Dashboard({ profile, permissions }: { profile: any, permissions: any })
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          className="absolute inset-0 rounded-[32px] pointer-events-none flex items-center justify-center bg-[#020203]/20 backdrop-blur-[4px] border border-rose-500/20"
+                          className="absolute inset-0 rounded-[36px] pointer-events-none flex items-center justify-center bg-[#020203]/30 backdrop-blur-[4px] border border-rose-500/30"
                         >
                           <motion.div 
-                            animate={{ opacity: [0.3, 0.6, 0.3] }}
+                            animate={{ 
+                              scale: [1, 1.1, 1],
+                              opacity: [0.5, 0.8, 0.5]
+                            }}
                             transition={{ duration: 2, repeat: Infinity }}
                             className="flex flex-col items-center gap-2"
                           >
-                            <Shield className="w-6 h-6 text-rose-500" />
-                            <span className="text-[8px] font-black text-rose-500 uppercase tracking-[0.3em]">Breach Detected</span>
+                            <Shield className="w-6 h-6 text-rose-500 drop-shadow-lg" />
+                            <span className="text-[8px] font-black text-rose-400 uppercase tracking-[0.3em]">Breach Detected</span>
                           </motion.div>
                         </motion.div>
                       )}
@@ -849,25 +928,26 @@ function AnalyticsPage() {
         <div className="glass rounded-[40px] p-8 h-72 flex items-end justify-between gap-3 relative overflow-hidden border border-white/5">
           <div className="absolute inset-0 opacity-5 bg-[repeating-linear-gradient(0deg,transparent,transparent_20%,rgba(255,255,255,0.5)_20%,rgba(255,255,255,0.5)_20.5%)]" />
           {barValues.map((val, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-3 justify-end h-full">
+            <div key={i} className="flex-1 flex flex-col items-center gap-3 justify-end h-full group">
               <motion.div
-                initial={{ height: 0 }}
-                animate={{ height: `${val}%` }}
-                transition={{ delay: i * 0.07, type: 'spring', damping: 20 }}
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: `${val}%`, opacity: 1 }}
+                transition={{ delay: i * 0.07, type: 'spring', damping: 20, stiffness: 80 }}
+                whileHover={{ scaleY: 1.05 }}
                 className={cn(
-                  "w-full rounded-2xl shadow-lg relative overflow-hidden",
-                  val >= 90 ? 'bg-gradient-to-t from-rose-600 to-red-400 shadow-rose-500/20' : 'bg-gradient-to-t from-indigo-600 to-purple-400 shadow-indigo-500/20'
+                  "w-full rounded-t-3xl shadow-lg relative overflow-hidden cursor-pointer transition-all group-hover:shadow-2xl",
+                  val >= 90 ? 'bg-gradient-to-t from-rose-600 via-rose-500 to-red-400 shadow-rose-500/30 group-hover:shadow-rose-500/50' : 'bg-gradient-to-t from-indigo-600 via-indigo-500 to-purple-400 shadow-indigo-500/30 group-hover:shadow-indigo-500/50'
                 )}
               >
                 {val >= 90 && (
                   <motion.div
-                    animate={{ opacity: [0.3, 0.6, 0.3] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="absolute inset-0 bg-white/10"
+                    animate={{ opacity: [0.2, 0.4, 0.2] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent"
                   />
                 )}
               </motion.div>
-              <span className="text-[9px] font-black text-zinc-600">{days[i]}</span>
+              <span className="text-[9px] font-black text-zinc-600 group-hover:text-zinc-400 transition-colors">{days[i]}</span>
             </div>
           ))}
         </div>
@@ -1006,23 +1086,45 @@ function FocusModePage({ theme }: { theme: Theme }) {
             exit={{ opacity: 0, scale: 0.9 }}
             className={cn(
               "relative rounded-[48px] p-12 text-center transition-all duration-1000 overflow-hidden",
-              isActive ? "bg-indigo-600 shadow-indigo-500/40" : "glass border-white/10"
+              isActive ? "bg-gradient-to-br from-indigo-600 via-indigo-600 to-purple-600 shadow-[0_0_80px_rgba(99,102,241,0.5)]" : "glass border-white/10 bg-gradient-to-br from-zinc-900/50 to-zinc-900/30"
             )}
           >
+            {isActive && (
+              <motion.div 
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  opacity: [0.2, 0.3, 0.2]
+                }}
+                transition={{ duration: 4, repeat: Infinity }}
+                className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent blur-3xl"
+              />
+            )}
             <div className="relative z-10 space-y-8 flex flex-col items-center">
-              <motion.div animate={{ scale: isActive ? [1, 1.1, 1] : 1 }} transition={{ duration: 2, repeat: Infinity }} className={cn("w-24 h-24 rounded-full flex items-center justify-center transition-all shadow-2xl", isActive ? "bg-white text-indigo-600" : "bg-white/5 border border-white/10 text-zinc-500")}>
+              <motion.div 
+                animate={{ 
+                  scale: isActive ? [1, 1.15, 1] : 1,
+                  boxShadow: isActive ? ['0_0_20px_rgba(255,255,255,0.2)', '0_0_60px_rgba(255,255,255,0.4)', '0_0_20px_rgba(255,255,255,0.2)'] : '0_0_0px_rgba(255,255,255,0)'
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className={cn("w-24 h-24 rounded-full flex items-center justify-center transition-all shadow-2xl border-2", isActive ? "bg-white text-indigo-600 border-white/30" : "bg-white/10 border-white/20 text-zinc-500")}
+              >
                 {isActive ? <Lock className="w-10 h-10" /> : <Unlock className="w-10 h-10" />}
               </motion.div>
               <div className="space-y-2">
                 <h2 className="text-4xl font-black text-white tracking-tighter">{isActive ? 'The Void' : 'Unlocked'}</h2>
-                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">All distractions blocked</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/60">{isActive ? 'All distractions neutralized' : 'Ready to focus'}</p>
               </div>
               <button 
                 onClick={() => setIsActive(!isActive)}
-                className={cn("relative w-32 h-16 rounded-full p-2 border transition-all", isActive ? "bg-indigo-900/50 border-indigo-400" : "bg-white/5 border-white/10")}
+                className={cn("relative w-32 h-16 rounded-full p-2 border transition-all shadow-lg", isActive ? "bg-white/20 border-white/40 shadow-white/30" : "bg-white/10 border-white/20")}
               >
-                <motion.div layout animate={{ x: isActive ? 64 : 0 }} className={cn("w-12 h-12 rounded-full shadow-2xl flex items-center justify-center", isActive ? "bg-white" : "bg-zinc-700")}>
-                  <Zap className={cn("w-6 h-6", isActive ? "text-indigo-600 fill-indigo-600" : "text-white")} />
+                <motion.div 
+                  layout 
+                  animate={{ x: isActive ? 64 : 0 }} 
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                  className={cn("w-12 h-12 rounded-full shadow-2xl flex items-center justify-center transition-all", isActive ? "bg-white" : "bg-indigo-500")}
+                >
+                  <Zap className={cn("w-6 h-6 transition-colors", isActive ? "text-indigo-600 fill-indigo-600" : "text-white fill-white")} />
                 </motion.div>
               </button>
             </div>
@@ -1033,20 +1135,31 @@ function FocusModePage({ theme }: { theme: Theme }) {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="premium-border rounded-[48px] p-12 text-center bg-zinc-900/60 shadow-2xl border border-white/5 overflow-hidden relative"
+            className="premium-border rounded-[48px] p-12 text-center bg-gradient-to-br from-zinc-900/60 via-purple-950/30 to-zinc-900/60 shadow-2xl border border-white/5 overflow-hidden relative"
           >
+            <motion.div 
+              animate={{ 
+                scale: [1, 1.05, 1],
+                opacity: [0.2, 0.4, 0.2]
+              }}
+              transition={{ duration: 6, repeat: Infinity }}
+              className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-indigo-500/10 blur-2xl"
+            />
             <div className="relative z-10 space-y-10 flex flex-col items-center">
               <div className="relative w-48 h-48 flex items-center justify-center">
-                <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="45" fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="4" />
+                <svg className="absolute inset-0 w-full h-full -rotate-90 filter drop-shadow-lg" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="45" fill="transparent" stroke="rgba(255,255,255,0.08)" strokeWidth="4" />
                   <motion.circle 
                     cx="50" cy="50" r="45" fill="transparent" stroke="url(#pomoGrad)" strokeWidth="6" strokeLinecap="round" 
-                    strokeDasharray="283" animate={{ strokeDashoffset: 283 - (283 * timer) / 1500 }}
+                    strokeDasharray="283" 
+                    animate={{ strokeDashoffset: 283 - (283 * timer) / 1500 }}
+                    transition={{ duration: 0.5 }}
                   />
                   <defs>
                     <linearGradient id="pomoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                       <stop offset="0%" stopColor="#ef4444" />
-                      <stop offset="100%" stopColor="#f97316" />
+                      <stop offset="50%" stopColor="#f97316" />
+                      <stop offset="100%" stopColor="#f59e0b" />
                     </linearGradient>
                   </defs>
                 </svg>
@@ -1054,24 +1167,34 @@ function FocusModePage({ theme }: { theme: Theme }) {
               </div>
               
               <div className="flex items-center gap-6">
-                <button onClick={resetTimer} className="w-14 h-14 rounded-2xl glass flex items-center justify-center text-zinc-400 hover:text-white transition-all" title="Reset">
+                <motion.button 
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={resetTimer} 
+                  className="w-14 h-14 rounded-2xl glass flex items-center justify-center text-zinc-400 hover:text-white transition-all border border-white/10 hover:border-white/30" 
+                  title="Reset"
+                >
                   <RotateCcw className="w-6 h-6" />
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={toggleTimer}
-                  className="w-20 h-20 rounded-3xl bg-white text-zinc-900 flex items-center justify-center shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95 transition-all"
+                  className="w-20 h-20 rounded-3xl bg-gradient-to-br from-white via-white to-white/90 text-zinc-900 flex items-center justify-center shadow-[0_0_40px_rgba(255,255,255,0.4)] font-black"
                 >
                   {isRunning ? <Pause className="w-8 h-8 fill-zinc-900" /> : <Play className="w-8 h-8 fill-zinc-900 ml-1" />}
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => { setTimer(1500); setIsRunning(false); setSessionCount((c) => c + 1); }}
-                  className="w-14 h-14 rounded-2xl glass flex items-center justify-center text-zinc-400 hover:text-amber-400 transition-all"
+                  className="w-14 h-14 rounded-2xl glass flex items-center justify-center text-zinc-400 hover:text-amber-400 transition-all border border-white/10 hover:border-amber-500/30"
                   title="Skip session"
                 >
                   <ZapOff className="w-6 h-6" />
-                </button>
+                </motion.button>
               </div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
+              <p className="text-[10px] font-black uppercase tracking-widest text-white/60">
                 Session {sessionCount + 1} &middot; {isRunning ? 'In Progress' : timer === 1500 ? 'Ready' : 'Paused'}
               </p>
             </div>
@@ -1115,8 +1238,195 @@ function FocusModePage({ theme }: { theme: Theme }) {
   );
 }
 
+function VerifyAccountModal({ onClose }: any) {
+  const [email, setEmail] = useState('');
+  const [step, setStep] = useState<'email' | 'otp'>('email');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [timer, setTimer] = useState(0);
+  const [debugOtp, setDebugOtp] = useState('');
+
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => setTimer(t => t - 1), 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer]);
+
+  const sendOtp = async () => {
+    if (!email.includes('@')) {
+      setError('Invalid email address');
+      return;
+    }
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      console.log('OTP Response:', data);
+      if (!res.ok) throw new Error(data.error || 'Failed to send OTP');
+      setStep('otp');
+      setTimer(600);
+      // If OTP is returned (development mode), display it
+      if (data.otp) {
+        setDebugOtp(data.otp);
+        setError(`OTP Code: ${data.otp}`);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to send OTP');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyOtp = async () => {
+    const otpCode = otp.join('');
+    if (otpCode.length !== 6) {
+      setError('Enter all 6 digits');
+      return;
+    }
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp: otpCode }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Verification failed');
+      setError('✓ Account verified successfully!');
+      setTimeout(() => onClose(), 2000);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Verification failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOtpInput = (index: number, value: string) => {
+    if (/^\d*$/.test(value) && value.length <= 1) {
+      const newOtp = [...otp];
+      newOtp[index] = value;
+      setOtp(newOtp);
+      if (value && index < 5) {
+        document.getElementById(`otp-${index + 1}`)?.focus();
+      }
+    }
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] bg-[#020203]/90 backdrop-blur-xl p-8 flex items-center justify-center"
+      onClick={onClose}
+    >
+      <motion.div 
+        initial={{ y: 50, scale: 0.9 }}
+        animate={{ y: 0, scale: 1 }}
+        className="w-full max-w-sm glass rounded-[48px] p-10 border-white/10 relative overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button onClick={onClose} className="absolute top-8 right-8 text-zinc-500 hover:text-white transition-colors">
+          <X className="w-6 h-6" />
+        </button>
+
+        <AnimatePresence mode="wait">
+          {step === 'email' ? (
+            <motion.div key="email" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+              <div className="space-y-2">
+                <h3 className="text-3xl font-black tracking-tighter">Verify Account</h3>
+                <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">Enter your email for verification</p>
+              </div>
+              <input 
+                autoFocus
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your-email@example.com"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-lg font-black text-white focus:outline-none focus:border-indigo-500/50 transition-all placeholder:text-zinc-700"
+              />
+              {error && <p className="text-rose-400 text-sm font-bold">{error}</p>}
+              <button 
+                onClick={sendOtp}
+                disabled={loading}
+                className="w-full py-5 rounded-3xl bg-indigo-500 text-white font-black tracking-widest uppercase text-xs disabled:opacity-50"
+              >
+                {loading ? 'Sending...' : 'Send OTP'}
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div key="otp" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+              <div className="space-y-2">
+                <h3 className="text-3xl font-black tracking-tighter">Enter OTP</h3>
+                <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">Check your email for the code</p>
+              </div>
+              <div className="flex gap-3 justify-center">
+                {otp.map((digit, i) => (
+                  <input
+                    key={i}
+                    id={`otp-${i}`}
+                    type="text"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpInput(i, e.target.value)}
+                    className="w-12 h-12 text-center bg-white/5 border border-white/10 rounded-xl text-2xl font-black text-white focus:outline-none focus:border-indigo-500/50 transition-all"
+                  />
+                ))}
+              </div>
+              {debugOtp && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-center"
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400 mb-2">Dev Mode - Your Code:</p>
+                  <p className="text-2xl font-black text-amber-300 tracking-[0.4em]">{debugOtp}</p>
+                </motion.div>
+              )}
+              {error && !error.includes('✓') && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 text-center"
+                >
+                  <p className="text-xs font-black text-amber-300">{error}</p>
+                </motion.div>
+              )}
+              <div className="text-center text-sm text-zinc-500 font-bold">
+                {timer > 0 ? `Expires in ${Math.floor(timer / 60)}:${(timer % 60).toString().padStart(2, '0')}` : 'Code expired'}
+              </div>
+              {error && <p className={`text-sm font-bold ${error.includes('✓') ? 'text-emerald-400' : 'text-rose-400'}`}>{error}</p>}
+              <button 
+                onClick={verifyOtp}
+                disabled={loading}
+                className="w-full py-5 rounded-3xl bg-indigo-500 text-white font-black tracking-widest uppercase text-xs disabled:opacity-50"
+              >
+                {loading ? 'Verifying...' : 'Verify OTP'}
+              </button>
+              <button 
+                onClick={() => { setStep('email'); setError(''); setOtp(['', '', '', '', '', '']); setDebugOtp(''); }}
+                className="w-full py-3 rounded-2xl glass text-white font-black tracking-widest uppercase text-xs border border-white/10"
+              >
+                Change Email
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function SettingsPage({ activeTheme, onThemeChange, profile, permissions, setPermissions }: any) {
   const [features, setFeatures] = useState({ privacy: false, alerts: true });
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
 
   const requestPermission = async (type: 'usage' | 'notifications') => {
     if (isNative()) {
@@ -1152,6 +1462,19 @@ function SettingsPage({ activeTheme, onThemeChange, profile, permissions, setPer
           </div>
         </section>
       )}
+
+      <div className="space-y-6">
+        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 px-2">Security & Re-authentication</h3>
+        <Magnetic strength={0.2}>
+          <motion.button 
+            whileTap={{ scale: 0.95 }} 
+            onClick={() => setShowVerifyModal(true)}
+            className="w-full py-5 rounded-[32px] bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-black tracking-widest uppercase text-xs shadow-[0_0_30px_rgba(99,102,241,0.3)]"
+          >
+            Verify Account
+          </motion.button>
+        </Magnetic>
+      </div>
 
       <div className="space-y-6">
         <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 px-2">Access & Permissions</h3>
@@ -1207,6 +1530,10 @@ function SettingsPage({ activeTheme, onThemeChange, profile, permissions, setPer
           Terminate Matrix
         </motion.button>
       </Magnetic>
+
+      <AnimatePresence>
+        {showVerifyModal && <VerifyAccountModal onClose={() => setShowVerifyModal(false)} />}
+      </AnimatePresence>
     </div>
   );
 }
@@ -1257,12 +1584,44 @@ function SettingToggle({ icon: Icon, title, active, onToggle, isLast }: any) {
 
 function LoadingState() {
   return (
-    <div className="flex flex-col items-center justify-center h-[60vh] gap-6">
-      <div className="relative">
-        <div className="w-20 h-20 border-4 border-indigo-500/10 border-t-indigo-500 rounded-full animate-spin shadow-[0_0_40px_rgba(99,102,241,0.2)]" />
-        <Activity className="absolute inset-0 m-auto w-8 h-8 text-indigo-400 animate-pulse" />
+    <div className="flex flex-col items-center justify-center h-[60vh] gap-6 relative">
+      {/* Animated Background */}
+      <motion.div
+        animate={{ rotate: 360, scale: [1, 1.2, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        className="absolute w-48 h-48 rounded-full bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-pink-500/20 blur-3xl"
+      />
+      
+      <div className="relative z-10 flex flex-col items-center gap-6">
+        <div className="relative w-24 h-24">
+          <motion.div 
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-1 shadow-[0_0_40px_rgba(99,102,241,0.4)]"
+          >
+            <div className="inset-0 rounded-full bg-[#020203]" />
+          </motion.div>
+          <motion.div
+            animate={{ scale: [0.8, 1, 0.8], opacity: [0.3, 0.7, 0.3] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="absolute inset-2 rounded-full border-2 border-indigo-500/40"
+          />
+          <Activity className="absolute inset-0 m-auto w-10 h-10 text-indigo-400 animate-pulse drop-shadow-lg" />
+        </div>
+        <div className="text-center space-y-2">
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/60">Synchronizing Matrix...</p>
+          <motion.div className="flex gap-1.5 justify-center">
+            {[0, 1, 2].map(i => (
+              <motion.div
+                key={i}
+                animate={{ height: ['8px', '20px', '8px'] }}
+                transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.2 }}
+                className="w-1.5 bg-gradient-to-t from-indigo-500 to-purple-500 rounded-full"
+              />
+            ))}
+          </motion.div>
+        </div>
       </div>
-      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/40">Synchronizing Matrix...</p>
     </div>
   );
 }
